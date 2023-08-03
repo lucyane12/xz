@@ -15,7 +15,7 @@
   <button onclick="sendMessage()">Kirim</button>
   </div>
   <script>
-    const ws = new WebSocket('wss://cofee.cyclic.cloud');
+    const ws = new WebSocket('ws://localhost:3000');
     const senderInput = document.getElementById('senderInput');
 
     ws.onopen = () => {
