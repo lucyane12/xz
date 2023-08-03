@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat.io</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Ruang diskusi</h1>
+  <input hidden value="Admin" type="text" id="senderInput" placeholder="Nama pengirim..."><br><br>
+  <div align="center">
+  <div align="left" id="chatBox" style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;"></div><br>
+  <textarea cols="50" rows="5" id="messageInput" placeholder="Ketik pesan..."></textarea><br>
+  <button onclick="sendMessage()">Kirim</button>
+  </div>
+  <script>
+    const ws = new WebSocket('wss://rationally-enjoyed-cat.ngrok-free.app');
+    const senderInput = document.getElementById('senderInput');
+
+    ws.onopen = () => {
+      //appendMessage('Koneksi terjalin dengan server.');
+    };
+
+    ws.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      appendMessage(message.sender, message.message);
+    };
+
+    ws.onclose = () => {
+      appendMessage('Koneksi dengan server terputus.');
+    };
+
+    function sendMessage() {
+      const sender = senderInput.value;
+      const messageInput = document.getElementById('messageInput').value;
+      if (sender && messageInput) {
+        const message = { sender, message: messageInput };
+        ws.send(JSON.stringify(message));
+        document.getElementById('messageInput').value = '';
+      }
+    }
+
+    function appendMessage(sender, message) {
+      const chatBox = document.getElementById('chatBox');
+      const messageElement = document.createElement('div');
+      messageElement.innerHTML = `<strong>${sender}</strong>: ${message}`;
+      chatBox.appendChild(messageElement);
+    }
+  </script>
+</body>
+</html>
